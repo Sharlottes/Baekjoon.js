@@ -3,9 +3,8 @@ const rl = require("readline").createInterface(process.stdin, process.stdout);
 let lineCount = 0;
 let maxLine = 0;
 rl.on("line", line => {
-  if(lineCount == 0) {
-    maxLine = +line;
-  } else if(lineCount <= maxLine) { 
+  if(lineCount == 0) maxLine = +line;
+  else { 
     const [repeat, str] = line.split(/\s/g);
     let newStr = '';
     for(let i = 0; i < str.length; i++) {

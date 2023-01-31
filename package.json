@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "qt": "clear&&bash qt.bash"
+    "qt": "clear && bash scripts/qt.bash",
+    "start": "clear && bash scripts/start.bash"
   },
   "license": "MIT",
   "dependencies": {

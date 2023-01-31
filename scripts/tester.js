@@ -14,7 +14,7 @@ const options = (() => {
     [
       "testCase",
       "tc",
-      (value) => (defaults.testCaseMode = value || "./testcase.hjson"),
+      (value) => (defaults.testCaseMode = value || "../testcase.hjson"),
     ],
   ];
   for (const param of process.argv.slice(3)) {

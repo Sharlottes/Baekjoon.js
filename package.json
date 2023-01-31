@@ -2,5 +2,8 @@
   "scripts": {
     "qt": "clear&&bash qt.bash"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "hjson": "^3.2.2"
+  }
 }

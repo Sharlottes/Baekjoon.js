@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "qt": "clear&&bash qt.bash"
+  },
+  "license": "MIT"
+}

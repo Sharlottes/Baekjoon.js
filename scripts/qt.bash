@@ -1,1 +1,0 @@
-node scripts/tester ./src/$1 $2

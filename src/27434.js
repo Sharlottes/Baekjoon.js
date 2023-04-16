@@ -1,20 +1,25 @@
 const rl = require("readline").createInterface(process.stdin, process.stdout);
 rl.on("line", (line) => {
-  console.log(factorial(+line).toString());
+  console.log(factorialByMinHeapWithOptionalBigInt(+line).toString());
   rl.close();
 });
 
-function factorial(number) {
-  const heap = new PriorityQueue();
-  for (let i = 0; i <= number; i++) heap.enqueue(BigInt(i == 0 ? 1 : i));
+function factorialByMinHeapWithOptionalBigInt(number) {
+  const heap = new MinHeap();
+  for (let i = 0; i <= number; i++) heap.insert(i);
   while (heap.heap.length > 1) {
-    heap.enqueue(heap.dequeue().data * heap.dequeue().data);
+    const a = heap.remove();
+    const b = heap.remove();
+    const res =
+      a < Number.MAX_SAFE_INTEGER && b < Number.MAX_SAFE_INTEGER
+        ? a * b
+        : BigInt(a) * BigInt(b);
+    heap.insert(res < Number.MAX_SAFE_INTEGER ? res : BigInt(res));
   }
-  return heap.dequeue().data;
+  return heap.remove();
 }
-
-class Heap {
-  /** @type Array<{ data: number; }> */
+class MinHeap {
+  /** @type Array<{ data: number }> */
   heap = [];
 
   getLeftChildIndex = (parentIndex) => parentIndex * 2 + 1;
@@ -23,16 +28,28 @@ class Heap {
 
   peek = () => this.heap[0];
 
-  insert(data) {
+  insert = (data) => {
     const node = { data };
     this.heap.push(node);
     this.heapifyUp();
-  }
+  };
 
-  remove() {
+  heapifyUp = () => {
+    let index = this.heap.length - 1;
+    const lastInsertedNode = this.heap[index];
+    while (index > 0) {
+      const parentIndex = this.getParentIndex(index);
+      if (this.heap[parentIndex].data > lastInsertedNode.data) {
+        this.heap[index] = this.heap[parentIndex];
+        index = parentIndex;
+      } else break;
+    }
+    this.heap[index] = lastInsertedNode;
+  };
+
+  remove = () => {
     const count = this.heap.length;
-    const rootNode = this.peek();
-
+    const rootNode = this.heap[0];
     if (count <= 0) return undefined;
     if (count === 1) this.heap = [];
     else {
@@ -40,30 +57,12 @@ class Heap {
       this.heapifyDown();
     }
 
-    return rootNode;
-  }
-
-  heapifyUp() {
-    let currentIndex = this.heap.length - 1;
-    const lastInsertedNode = this.heap[currentIndex];
-
-    while (currentIndex > 0) {
-      const parentIndex = this.getParentIndex(currentIndex);
-
-      if (this.heap[parentIndex].data > lastInsertedNode.data) {
-        this.heap[currentIndex] = this.heap[parentIndex];
-        currentIndex = parentIndex;
-      } else break;
-    }
-
-    this.heap[currentIndex] = lastInsertedNode;
-  }
-
-  heapifyDown() {
+    return rootNode.data;
+  };
+  heapifyDown = () => {
     let index = 0;
     const count = this.heap.length;
-    const rootNode = this.peek();
-
+    const rootNode = this.heap[index];
     while (this.getLeftChildIndex(index) < count) {
       const leftChildIndex = this.getLeftChildIndex(index);
       const rightChildIndex = this.getRightChildIndex(index);
@@ -72,19 +71,11 @@ class Heap {
         this.heap[rightChildIndex].data < this.heap[leftChildIndex].data
           ? rightChildIndex
           : leftChildIndex;
-
       if (this.heap[smallerChildIndex].data <= rootNode.data) {
         this.heap[index] = this.heap[smallerChildIndex];
         index = smallerChildIndex;
       } else break;
     }
-
     this.heap[index] = rootNode;
-  }
-}
-
-class PriorityQueue extends Heap {
-  enqueue = (value) => this.insert(value);
-  dequeue = () => this.remove();
-  isEmpty = () => this.heap.length <= 0;
+  };
 }
